@@ -14,14 +14,16 @@ class BookRepository:
         return list(
             Book.select().where(
                 Book.status.in_([Book.STATUS_READING, Book.STATUS_REREADING])
-            ).order_by(Book.date_added)
+            )
+            # order_by(Book.date_added) — safe after migration
+            .order_by(Book.id)
         )
 
     def get_wishlist_books(self):
         return list(Book.select().where(Book.status == Book.STATUS_WISHLIST))
 
     def get_finished_this_year(self):
-        today = datetime.date.today()
+        today   = datetime.date.today()
         y_start = datetime.date(today.year, 1, 1)
         y_end   = datetime.date(today.year, 12, 31)
         return Book.select().where(
@@ -32,11 +34,11 @@ class BookRepository:
         ).count()
 
     def get_finished_this_month(self):
-        today   = datetime.date.today()
-        m_start = datetime.date(today.year, today.month, 1)
+        today = datetime.date.today()
         import calendar as cal
         last_day = cal.monthrange(today.year, today.month)[1]
-        m_end   = datetime.date(today.year, today.month, last_day)
+        m_start  = datetime.date(today.year, today.month, 1)
+        m_end    = datetime.date(today.year, today.month, last_day)
         return Book.select().where(
             (Book.status == Book.STATUS_FINISHED) &
             (Book.date_finished.is_null(False)) &
@@ -45,12 +47,11 @@ class BookRepository:
         ).count()
 
     def get_reading_days_this_month(self):
-        """Return set of day-numbers that had at least one reading session."""
-        today   = datetime.date.today()
-        m_start = datetime.date(today.year, today.month, 1)
+        today    = datetime.date.today()
         import calendar as cal
         last_day = cal.monthrange(today.year, today.month)[1]
-        m_end   = datetime.date(today.year, today.month, last_day)
+        m_start  = datetime.date(today.year, today.month, 1)
+        m_end    = datetime.date(today.year, today.month, last_day)
         sessions = ReadingSession.select().where(
             (ReadingSession.date >= m_start) &
             (ReadingSession.date <= m_end)
@@ -69,6 +70,7 @@ class BookRepository:
             total_pages=total_pages,
             status=status,
             cover_url=cover_url,
+            date_added=datetime.date.today(),
         )
 
     def update_book_page(self, book_id: int, end_page: int, minutes: int):
