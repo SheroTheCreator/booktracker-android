@@ -10,17 +10,18 @@ class BaseModel(Model):
 
 
 class Book(BaseModel):
-    STATUS_READING = 'READING'
-    STATUS_REREADING = 'REREADING'
-    STATUS_FINISHED = 'FINISHED'
-    STATUS_WISHLIST = 'WISHLIST'
+    STATUS_READING    = 'READING'
+    STATUS_REREADING  = 'REREADING'
+    STATUS_FINISHED   = 'FINISHED'
+    STATUS_WISHLIST   = 'WISHLIST'
 
-    title = CharField()
-    author = CharField()
-    cover_url = CharField(null=True)
-    total_pages = IntegerField(default=1)
+    title        = CharField()
+    author       = CharField()
+    cover_url    = CharField(null=True)
+    total_pages  = IntegerField(default=1)
     current_page = IntegerField(default=0)
-    status = CharField(default=STATUS_WISHLIST)
+    status       = CharField(default=STATUS_WISHLIST)
+    date_added   = DateField(default=datetime.date.today)
     date_finished = DateField(null=True)
 
     class Meta:
@@ -28,18 +29,18 @@ class Book(BaseModel):
 
 
 class ReadingSession(BaseModel):
-    book = ForeignKeyField(Book, backref='sessions')
-    pages_read = IntegerField(default=0)
+    book          = ForeignKeyField(Book, backref='sessions')
+    pages_read    = IntegerField(default=0)
     minutes_spent = IntegerField(default=0)
-    date = DateField(default=datetime.date.today)
+    date          = DateField(default=datetime.date.today)
 
     class Meta:
         table_name = 'reading_sessions'
 
 
 class Quote(BaseModel):
-    book = ForeignKeyField(Book, backref='quotes')
-    text = TextField()
+    book       = ForeignKeyField(Book, backref='quotes')
+    text       = TextField()
     date_added = DateField(default=datetime.date.today)
 
     class Meta:
