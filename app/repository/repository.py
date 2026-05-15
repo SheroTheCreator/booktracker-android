@@ -19,10 +19,14 @@ class BookRepository:
         )
 
     def get_finished_this_year(self):
-        year = datetime.date.today().year
+        today = datetime.date.today()
+        year_start = datetime.date(today.year, 1, 1)
+        year_end = datetime.date(today.year, 12, 31)
         return Book.select().where(
             (Book.status == Book.STATUS_FINISHED) &
-            (Book.date_finished.year == year)
+            (Book.date_finished.is_null(False)) &
+            (Book.date_finished >= year_start) &
+            (Book.date_finished <= year_end)
         ).count()
 
     def update_book_page(self, book_id: int, end_page: int, minutes: int):
@@ -50,6 +54,9 @@ class BookRepository:
     def add_quote(self, book_id: int, text: str):
         book = Book.get_by_id(book_id)
         return Quote.create(book=book, text=text)
+
+    def get_wishlist_books(self):
+        return list(Book.select().where(Book.status == 'WISHLIST'))
 
     # ---------- Stats ----------
 
