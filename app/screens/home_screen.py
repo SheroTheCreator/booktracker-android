@@ -2,12 +2,11 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.button import MDRaisedButton, MDIconButton
-from kivymd.uix.progressindicator import MDLinearProgressIndicator
 from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.textfield import MDTextField
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.recycleview import RecycleView
+from kivy.uix.progressbar import ProgressBar
 from kivy.metrics import dp
 from kivy.clock import Clock
 from kivy.animation import Animation
@@ -99,10 +98,10 @@ class UpdateProgressDialog:
             self.error_label.text = 'End page must be > current page.'
             return
         if ep > self.total_pages:
-            self.error_label.text = f'End page must be ≤ {self.total_pages}.'
+            self.error_label.text = f'End page must be <= {self.total_pages}.'
             return
         if mins < 1:
-            self.error_label.text = 'Minutes must be ≥ 1.'
+            self.error_label.text = 'Minutes must be >= 1.'
             return
         self.dialog.dismiss()
         self.on_confirm(ep, mins)
@@ -178,7 +177,7 @@ class HomeScreen(MDScreen):
             height=dp(22),
             theme_text_color='Secondary',
         )
-        self.goal_bar = MDLinearProgressIndicator(value=0, size_hint_y=None, height=dp(6))
+        self.goal_bar = ProgressBar(max=100, value=0, size_hint_y=None, height=dp(8))
 
         # --- Carousel placeholder (horizontal scroll) ---
         self.carousel_scroll = ScrollView(
@@ -226,7 +225,7 @@ class HomeScreen(MDScreen):
             height=dp(22),
             theme_text_color='Secondary',
         )
-        self.progress_bar = MDLinearProgressIndicator(value=0, size_hint_y=None, height=dp(8))
+        self.progress_bar = ProgressBar(max=100, value=0, size_hint_y=None, height=dp(10))
 
         # --- Action buttons ---
         btn_row = MDBoxLayout(
